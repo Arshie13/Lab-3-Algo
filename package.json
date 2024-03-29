@@ -1,0 +1,16 @@
+{
+  "name": "lab-3",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "Anfernee Joan Ng <anfernee.stacktrek@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^20.11.29",
+    "min-heap-typed": "^1.52.0",
+    "pnpm": "^8.15.5",
+    "typescript": "^5.4.2"
+  },
+  "scripts": {
+    "start": "ts-node ./src/index.ts "
+  }
+}
