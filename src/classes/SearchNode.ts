@@ -12,7 +12,7 @@ class SearchNode {
   }
 
   priority(): number {
-    return this.moves + this.board.manhattanAmount;
+    return this.moves + this.board.manhattan();
   }
 
   // is the search node the goal node?
@@ -29,7 +29,7 @@ class SearchNode {
   }
 
   heuristic() {
-    return this.board.manhattanAmount + this.moves;
+    return this.board.manhattan() + this.moves;
   }
 
   // compare the search node with another search node

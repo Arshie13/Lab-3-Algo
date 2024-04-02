@@ -59,39 +59,36 @@ class Solver {
 
 	solve(): void {
 		let queue = new MinHeap<SearchNode>([], { comparator: (a, b) => a.priority() - b.priority() });
-
 		queue.add(this.initialNode);
-		queue.add(this.twinNode);
 
-		let currentNode: SearchNode | undefined = queue.poll();
+		while (!queue.isEmpty()) {
+			const currentNode = queue.poll();
 
-		if (currentNode === undefined) {
-			throw new Error("Queue is empty")
-		}
-
-		while (currentNode && !currentNode.board.isGoal()) {
-			let neighbors: Board[] = [];
-			for (let board of currentNode.neighbors()) {
-				neighbors.push(board);
+			if (!currentNode) {
+				throw new Error("Queue is empty");
 			}
-			let moves = currentNode.moves + 1;
 
-			for (let neighbor of neighbors) {
-				let previousBoard = null;
+			if (currentNode.board.isGoal()) {
+				this.initialNode = currentNode;
+				return; // Solution found, exit the loop
+			}
 
-				if (currentNode.previousSearchNode !== null) {
-					previousBoard = currentNode.previousSearchNode.getBoard();
-				}
-				if (neighbor !== previousBoard) {
-					let node = new SearchNode(neighbor, moves);
+			for (const neighbor of currentNode.neighbors()) {
+				const previousBoard = currentNode.previousSearchNode ? currentNode.previousSearchNode.getBoard() : null;
+
+				if (previousBoard !== neighbor) {
+					const moves = currentNode.moves + 1;
+					const node = new SearchNode(neighbor, moves);
 					node.previousSearchNode = currentNode;
 					queue.add(node);
-				} else continue;
+				}
 			}
-			this.initialNode = currentNode;
-			currentNode = queue.poll();
 		}
+
+		// If the loop exits, the queue is empty and the puzzle is unsolvable
+		throw new Error("Puzzle is unsolvable");
 	}
+
 }
 
 export default Solver;

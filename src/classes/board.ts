@@ -2,17 +2,18 @@ class Board {
 	// create a board from an n-by-n array of tiles,
 	// where tiles[row][col] = tile at (row, col)
 	tiles: number[][];
-	hammingAmount: number;
-	manhattanAmount: number;
+	hammingDistance: number;
+	manhattanDistance: number;
 	neighboringBoard: Board[];
 
 	constructor(tiles: number[][]) {
 		// YOUR CODE HERE
 		// this.tiles = new Array(tiles.length).fill(0).map(() => new Array(tiles.length).fill(0));
 		this.tiles = tiles;
-		let hammingTotal = 0;
-		let manhattanTotal = 0;
 		this.neighboringBoard = [];
+
+		let hammingTotal: number = 0;
+		let manhattanTotal: number = 0;
 
 		for (let i = 0; i < this.dimension(); i++) {
 			for (let j = 0; j < this.dimension(); j++) {
@@ -20,21 +21,24 @@ class Board {
 
 				if (tile === 0) continue;
 
-				let compare = i * this.dimension() + j + 1;
-
-				if (tile !== compare) {
-					hammingTotal++
+				if (tile !== 0 && tile !== i * this.dimension() + j + 1) {
+					hammingTotal++;
 				}
 
-				let tileI = Math.floor((tile - 1) / this.dimension());
-				let tileJ = (tile -  1) % this.dimension();
-				let distance = (Math.abs(i - tileI) + Math.abs(j - tileJ));
-
-				manhattanTotal += distance;
+				const target = this.findPosition(tile)!;
+				const targetRow = target[0];
+				const targetCol = target[1];
+				manhattanTotal += Math.abs(i - targetRow) + Math.abs(j - targetCol);
 			}
 		}
-		this.hammingAmount = hammingTotal;
-		this.manhattanAmount = manhattanTotal;
+		this.hammingDistance = hammingTotal;
+		this.manhattanDistance = manhattanTotal;
+	}
+
+	findPosition(tile: number): [number, number] {
+		let targetRow = Math.floor((tile - 1) / this.dimension());
+		let targetCol = (tile - 1) % this.dimension();
+		return [targetRow, targetCol];
 	}
 
 	// string representation of this board
@@ -69,23 +73,12 @@ class Board {
 		// 		}
 		// 	}
 		// }
-		return this.hammingAmount;
+		return this.hammingDistance;
 	}
 
 	// sum of Manhattan distances between tiles and goal
 	manhattan(): number {
-		// let manhattanTotal = 0;
-		// for (let i = 0; i < this.dimension(); i++) {
-		// 	for (let j = 0; j < this.dimension(); j++) {
-		// 		let tile = this.tiles[i][j];
-		// 		if (tile !== 0) { // we don't compute Manhattan distance for the empty tile
-		// 			let goalRow = Math.floor((tile - 1) / this.dimension());
-		// 			let goalCol = (tile - 1) % this.dimension();
-		// 			manhattanTotal += Math.abs(i - goalRow) + Math.abs(j - goalCol);
-		// 		}
-		// 	}
-		// }
-		return this.manhattanAmount;
+		return this.manhattanDistance;
 	}
 
 	// is this board the goal board?
@@ -97,21 +90,26 @@ class Board {
 	// does this board equal y?
 	equals(y: Board): boolean {
 		// PLS MODIFY
-		if (y === null || !(y instanceof Board)) {
-			return false;
+		let bool = true;
+		let array2d = this.tiles;
+		let array2d2 = y.tiles;
+		if (y === null || !(y instanceof Board) || this.dimension() !== y.dimension()) {
+			bool = false;
+			return bool;
 		}
 
-		const anotherBoard = y;
-		if (this.dimension() !== anotherBoard.dimension()) return false;
-
-		for (let i = 0; i < this.dimension(); i++) {
-			for (let j = 0; j < this.dimension(); j++) {
-				if (this.tiles[i][j] !== anotherBoard.tiles[i][j]) return false;
+		for (let i = 0; i < array2d.length; i++) {
+			for (let j = 0; j < array2d[i].length; j++) {
+				if (array2d[i][j] !== array2d2[i][j]) {
+					bool = false;
+					break;
+				}
 			}
+			if (!bool) break;
 		}
-
-		return true;
+		return bool
 	}
+
 
 	// all neighboring boards
 	neighbors(): Board[] {
@@ -194,29 +192,21 @@ export default Board;
 // const tiles3 = [[1, 2, 0], [4, 5, 3], [7, 8, 6]]
 
 // const board = new Board(tiles);
-// const board2 = new Board(tiles2);
-// const board3 = new Board(tiles);
+// const board2 = new Board(tiles3);
 
-// console.log('Board: ', board.toStrings());
-// console.log('\n');
-// console.log('Board dimension: ', board.dimension());
-// console.log('\n');
-// console.log('Hamming amount: ', board.hamming());
-// console.log('\n');
-// console.log('Manhattan amount: ', board.manhattan());
-// console.log('\n');
-// console.log('is equal: ', board.equals(board2));
-// console.log('\n');
-// const goalBoard = board.neighbors()[0];
-// console.log('is equal: ', board2.equals(goalBoard));
-// console.log('\n');
-// console.log('neighboring boards: ', board2.isGoal());
-// console.log('\n');
-// console.log('neighboring boards 3 manhattan amount: ', board.manhattan());
-// console.log('\n');
-// console.log('neighboring boards 3 hamming amount: ', board.hamming());
-// console.log('\n');
-// console.log('twin board: ', board2.twin());
-// console.log('\n');
-// console.log('tiles copy: ', board2.tilesCopy());
-// console.log('\n');
+// // 1 2 0
+// // 4 5 3
+// // 7 8 6
+
+// const board3 = new Board(tiles2);
+// console.log("dimension: ", board3.dimension());
+// console.log("length: ", board3.tiles.length);
+// console.log("manhattan: ", board3.manhattan());
+// console.log("hamming: ", board3.hamming());
+// console.log("isGoal: ", board3.isGoal());
+// console.log("equals: ", board.equals(board3));
+// console.log("equals: ", board3.equals(board3));
+// console.log("neighbors: ", board3.neighbors());
+// console.log("twin: ", board3.twin());
+// console.log("tilesCopy: ", board3.tilesCopy());
+// console.log("toStrings: ", board3.toStrings());
