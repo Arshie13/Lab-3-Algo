@@ -8,7 +8,6 @@ class Board {
 
 	constructor(tiles: number[][]) {
 		// YOUR CODE HERE
-		// this.tiles = new Array(tiles.length).fill(0).map(() => new Array(tiles.length).fill(0));
 		this.tiles = tiles;
 		this.neighboringBoard = [];
 
@@ -45,7 +44,6 @@ class Board {
 	toStrings(): string {
 		// PLS MODIFY
 		let stringBuilder: string[] = [];
-		// stringBuilder.push(this.dimension().toString());
 
 		for (let i = 0; i < this.dimension(); i++) {
 			stringBuilder.push("\n");
@@ -64,15 +62,6 @@ class Board {
 
 	// number of tiles out of place
 	hamming(): number {
-		// let hammingTotal = 0;
-		// for (let i = 0; i < this.dimension(); i++) {
-		// 	for (let j = 0; j < this.dimension(); j++) {
-		// 		let tile = this.tiles[i][j];
-		// 		if (tile !== 0 && tile !== i * this.dimension() + j + 1) {
-		// 			hammingTotal++;
-		// 		}
-		// 	}
-		// }
 		return this.hammingDistance;
 	}
 

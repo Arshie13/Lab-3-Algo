@@ -1,4 +1,5 @@
 import Board from "./board";
+import { MinHeap } from "min-heap-typed";
 
 class SearchNode {
   board: Board;
@@ -39,6 +40,19 @@ class SearchNode {
 
   toStrings(): string {
     return this.board.toStrings();
+  }
+
+  insertNeighbors(queue: MinHeap<SearchNode>, currentNode: SearchNode): void {
+    for (const neighbor of currentNode.neighbors()) {
+      const previousBoard = currentNode.previousSearchNode ? currentNode.previousSearchNode.getBoard() : null;
+
+      if (previousBoard !== neighbor) {
+        const moves = currentNode.moves + 1;
+        const node = new SearchNode(neighbor, moves);
+        node.previousSearchNode = currentNode;
+        queue.add(node);
+      }
+    }
   }
 }
 
