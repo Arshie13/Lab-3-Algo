@@ -6,6 +6,7 @@ class Solver {
 	// find a solution to the initial board (using the A* algorithm)
 	initialNode: SearchNode | null;
 	twinNode: SearchNode;
+
 	constructor(initial: Board) {
 		if (initial === null) {
 			throw new Error("Board cannot be null");
@@ -36,9 +37,12 @@ class Solver {
 				this.initialNode = null;
 				break;
 			}
-
+			// change to insertNeighbors2() for faster performance (jk it's slower)
 			currentNode.insertNeighbors(queue, currentNode);
 			twinCurrentNode.insertNeighbors(twinQueue, twinCurrentNode);
+
+			// currentNode.insertNeighbors2(queue, currentNode, new Set<string>());
+			// twinCurrentNode.insertNeighbors2(twinQueue, twinCurrentNode, new Set<string>());
 		}
 	}
 
@@ -46,19 +50,6 @@ class Solver {
 	isSolvable(): boolean {
 		// PLS MODIFY
 		return this.initialNode !== null;
-	}
-
-	insertNeighbors(queue: MinHeap<SearchNode>, currentNode: SearchNode): void {
-		for (const neighbor of currentNode.neighbors()) {
-			const previousBoard = currentNode.previousSearchNode ? currentNode.previousSearchNode.getBoard() : null;
-
-			if (previousBoard !== neighbor) {
-				const moves = currentNode.moves + 1;
-				const node = new SearchNode(neighbor, moves);
-				node.previousSearchNode = currentNode;
-				queue.add(node);
-			}
-		}
 	}
 
 	moves(): number | undefined {

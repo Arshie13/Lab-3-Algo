@@ -5,15 +5,24 @@ class SearchNode {
   board: Board;
   moves: number;
   previousSearchNode: SearchNode | null;
+  cachePriority: number | null;
 
   constructor(board: Board, moves: number) {
     this.board = board;
     this.moves = moves;
     this.previousSearchNode = null;
+    this.cachePriority = null;
   }
 
   priority(): number {
-    return this.moves + this.board.manhattan();
+    // dunno if this is how caching works but ok
+    if (this.cachePriority !== null) {
+      return this.cachePriority;
+    }
+
+    let priority = this.moves + this.board.manhattan();
+    this.cachePriority = priority;
+    return priority;
   }
 
   // is the search node the goal node?
@@ -42,8 +51,11 @@ class SearchNode {
     return this.board.toStrings();
   }
 
+  // tried implementing the visited set in this class but it was not much faster than this lmaooo
+  // but then again it was only a few test cases so I might be wrong hehe
   insertNeighbors(queue: MinHeap<SearchNode>, currentNode: SearchNode): void {
     for (const neighbor of currentNode.neighbors()) {
+
       const previousBoard = currentNode.previousSearchNode ? currentNode.previousSearchNode.getBoard() : null;
 
       if (previousBoard !== neighbor) {
@@ -54,19 +66,20 @@ class SearchNode {
       }
     }
   }
+
+  // wrote this as a separate method for testing purposes
+  insertNeighbors2(queue: MinHeap<SearchNode>, currentNode: SearchNode, visited: Set<string>): void {
+    for (const neighbor of currentNode.neighbors()) {
+      const neighborString = neighbor.toStrings();
+      if (!visited.has(neighborString)) {
+        visited.add(neighborString);
+        const moves = currentNode.moves + 1;
+        const node = new SearchNode(neighbor, moves);
+        node.previousSearchNode = currentNode;
+        queue.add(node);
+      }
+    }
+  }
 }
 
 export default SearchNode;
-
-
-// const heap = new MinHeap<SearchNode>([], { comparator: (a, b) => a.priority() - b.priority() });
-// const node1 = new SearchNode(13)
-// const node2 = new SearchNode(15)
-// const node3 = new SearchNode(8)
-
-// heap.add(node1);
-// heap.add(node2);
-// heap.add(node3);
-
-// console.log(heap.poll())
-// console.log(heap.peek())
